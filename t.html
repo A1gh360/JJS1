@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 تعلم Java باحتراف</title>
+
+    <!-- تحميل مكتبة Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+
+    <style>
+        /* تحسين الخلفية */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: gold;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        /* تحسين عرض البطاقة */
+        .lesson-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 20px rgba(255, 165, 0, 0.7);
+        }
+
+        .lesson-card .category {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff7f50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .lesson-card pre {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+
+        .lesson-card .show-explanation {
+            display: block;
+        }
+
+        .lesson-card .hide-explanation {
+            display: none;
+        }
+
+        /* إضافة التنسيق لتحسين تصميم الفلاتر */
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .filter-container select,
+        .filter-container input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            outline: none;
+            width: 30%;
+        }
+
+        /* الوضع الليلي */
+        .dark-mode {
+            background-color: #121212;
+            color: black;
+        }
+
+        .dark-mode .lesson-card {
+            background-color: #1e1e1e;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .lesson-card h4 {
+            color: #ff7f50;
+        }
+
+        .dark-mode .lesson-card p,
+        .dark-mode .lesson-card .category {
+            color: #f8f9fa;
+        }
+
+        .dark-mode .lesson-card .copy-btn {
+            background-color: #ff7f50;
+        }
+
+        /* تحسين النصوص داخل الأكواد في الوضعين */
+        pre code {
+            color:black;
+        }
+
+        .dark-mode pre code {
+            color: black;
+            background-color: dark;
+        }
+
+        /* التأكد من أن النصوص تكون مرئية في الوضعين */
+        .dark-mode .lesson-card .category {
+            background-color: #ff7f50;
+        }
+
+        .dark-mode .lesson-card pre {
+            color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="text-center py-6 bg-gradient-to-r from-orange-500 to-yellow-500">
+        <h1 class="text-4xl font-bold text-white">📚 تعلم Java باحتراف</h1>
+        <p class="text-lg mt-2 text-white">كل ما تحتاجه لإتقان Java بسهولة واحترافية</p>
+    </header>
+
+    <!-- مربع البحث والفلاتر -->
+    <div class="container mt-6">
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="🔎 ابحث عن درس..."
+                class="p-3 rounded-md border border-gray-500 focus:outline-none text-black shadow-md">
+
+            <select id="filterCategory" class="p-3 rounded-md border border-gray-500">
+                <option value="">التصنيف</option>
+                <option value="مبتدئ">مبتدئ</option>
+                <option value="متوسط">متوسط</option>
+                <option value="متقدم">متقدم</option>
+            </select>
+
+            <button id="darkModeToggle" class="p-3 rounded-md bg-gray-800 text-white">
+                🌙 وضع الليل
+            </button>
+        </div>
+    </div>
+
+    <!-- عرض قائمة الدروس -->
+    <div id="lessonsList" class="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8"></div>
+
+    <script>
+        // مصفوفة تحتوي على الدروس
+        const lessons = [
+            {
+                title: '🔹 طباعة النصوص في Java',
+                description: 'تعلم كيفية طباعة نص باستخدام Java.',
+                category: 'مبتدئ',
+                code: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("مرحبًا بالعالم!");\n    }\n}`,
+                explanation: 'نستخدم <code>System.out.println()</code> لطباعة النصوص في Java.\n\n**نصائح مهمة**: تأكد من وجود فواصل بين النصوص عند استخدامها.'
+            },
+            {
+                title: '🔹 المتغيرات في Java',
+                description: 'تعلم كيفية تعريف المتغيرات في Java.',
+                category: 'مبتدئ',
+                code: `int number = 10;\nString name = "أحمد";\nSystem.out.println(name + " لديه " + number + " تفاحة.");`,
+                explanation: 'نستخدم <code>int</code> للأرقام و <code>String</code> للنصوص.\n\n**نصيحة**: عند تعريف المتغيرات، تأكد من تحديد النوع المناسب مثل <code>int</code> أو <code>String</code>.'
+            },
+            {
+                title: '🔹 استخدام الشروط (if-else)',
+                description: 'كيفية استخدام الشروط للتحقق من القيم.',
+                category: 'متوسط',
+                code: `int age = 18;\nif (age >= 18) {\n    System.out.println("يمكنك التصويت!");\n} else {\n    System.out.println("أنت صغير جدًا للتصويت.");\n}`,
+                explanation: 'نستخدم <code>if-else</code> لاتخاذ قرارات بناءً على القيم.\n\n**نصيحة**: تأكد من استخدام الأقواس بعد <code>if</code> و<code>else</code> لتعريف الكود المراد تنفيذه.'
+            },
+            {
+                title: '🔹 الحلقات التكرارية (for loop)',
+                description: 'كيفية استخدام الحلقات التكرارية لتنفيذ الكود عدة مرات.',
+                category: 'متوسط',
+                code: `for (int i = 0; i < 5; i++) {\n    System.out.println("التكرار: " + i);\n}`,
+                explanation: 'نستخدم <code>for</code> لإنشاء حلقة تكرارية عدد معين من المرات.\n\n**نصيحة**: تأكد من وجود شرط الإيقاف داخل الحلقة لتجنب التكرار اللانهائي.'
+            }
+        ];
+
+        let darkMode = false;
+
+        // تحميل الدروس
+        function loadLessons(filteredLessons = lessons) {
+            const container = document.getElementById('lessonsList');
+            container.innerHTML = '';
+
+            filteredLessons.forEach(lesson => {
+                const card = document.createElement('div');
+                card.classList.add('lesson-card');
+                card.innerHTML = `
+                    <div class="category">${lesson.category}</div>
+                    <h4 class="text-xl text-orange-400 font-semibold">${lesson.title}</h4>
+                    <p class="mt-3 text-gray-600">${lesson.description}</p>
+                    <pre><code>${lesson.code}</code></pre>
+                    <button class="copy-btn text-white bg-blue-600 p-2 mt-3 rounded-md" data-clipboard-text="${lesson.code}">
+                        📃نسخ الكود
+                    </button>
+                    <p class="mt-3 text-gray-600">${lesson.explanation}</p>
+                    <button class="mt-2 text-blue-500" onclick="toggleExplanation(this)">إظهار/إخفاء الشرح</button>
+                `;
+                container.appendChild(card);
+            });
+
+            // تفعيل وظيفة النسخ
+            const clipboard = new ClipboardJS('.copy-btn');
+            clipboard.on('success', function () {
+                alert('!تم نسخ الكود بنجاح!');
+            });
+        }
+
+        // دالة لتصفية الدروس حسب الفئة
+        document.getElementById('filterCategory').addEventListener('change', function () {
+            const filteredCategory = this.value;
+            const filteredLessons = filteredCategory ? lessons.filter(lesson => lesson.category === filteredCategory) : lessons;
+            loadLessons(filteredLessons);
+        });
+
+        // دالة لتصفية الدروس حسب النص المكتوب في مربع البحث
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            const filteredLessons = lessons.filter(lesson => lesson.title.toLowerCase().includes(searchQuery) || lesson.description.toLowerCase().includes(searchQuery));
+            loadLessons(filteredLessons);
+        });
+
+        // دالة لتبديل الوضع الداكن
+        document.getElementById('darkModeToggle').addEventListener('click', function () {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+        });
+
+        // دالة لتبديل إظهار الشرح
+        function toggleExplanation(button) {
+            const explanation = button.previousElementSibling;
+            explanation.classList.toggle('show-explanation');
+            explanation.classList.toggle('hide-explanation');
+        }
+
+        // تحميل الدروس عند أول تحميل للصفحة
+        loadLessons();
+    </script>
+
+</body>
+
+</html>html>�لة لتبديل إظهار الشرح
+        function toggleExplanation(button) {
+            const explanation = button.previousElementSibling;
+            explanation.classList.toggle('show-explanation');
+            explanation.classList.toggle('hide-explanation');
+        }
+
+        // تحميل الدروس عند أول تحميل للصفحة
+        loadLessons();
+    </script>
+
+</body>
+
+</html>html>>
